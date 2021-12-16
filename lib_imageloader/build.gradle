@@ -1,0 +1,13 @@
+//****************************************
+//********* lib_common 的配置文件 **********
+//****************************************
+
+apply from: '../base_lib.gradle'
+
+import cn.org.yxj.tool.*
+
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    api DependencyConfig.GitHub.Gilde
+}

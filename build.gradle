@@ -1,0 +1,30 @@
+import cn.org.yxj.tool.*
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+        maven { url 'https://maven.google.com' }
+    }
+    dependencies {
+        classpath ProjectPluginManager.AndroidToolsPlugin
+        classpath ProjectPluginManager.KotlinPlugin
+        classpath ProjectPluginManager.ARouterRegister
+        classpath ProjectPluginManager.HiltPlugin
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.20'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

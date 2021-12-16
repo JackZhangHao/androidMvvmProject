@@ -1,0 +1,9 @@
+rootProject.name = "DoctorTool"
+include ':app'
+include ':module_login'
+include ':module_home'
+include ':module_mine'
+include ':lib_common'
+include ':lib_base'
+include ':lib_net'
+include ':lib_imageloader'

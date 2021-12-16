@@ -1,0 +1,110 @@
+//****************************************
+//************ app 壳的配置文件 ************
+//****************************************
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'com.alibaba.arouter'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'dagger.hilt.android.plugin'
+
+import cn.org.yxj.tool.*
+
+android {
+    compileSdkVersion ProjectBuildConfig.compileSdkVersion
+    buildToolsVersion ProjectBuildConfig.buildToolsVersion
+
+    defaultConfig {
+        applicationId ProjectBuildConfig.applicationId
+        minSdkVersion ProjectBuildConfig.minSdkVersion
+        targetSdkVersion ProjectBuildConfig.targetSdkVersion
+        versionCode ProjectBuildConfig.versionCode
+        versionName ProjectBuildConfig.versionName
+        testInstrumentationRunner DependencyConfig.AndroidX.AndroidJUnitRunner
+        multiDexKeepProguard file("multidexKeep.pro")
+
+        ndk {
+            // 设置支持的SO库架构
+            //abiFilters 'armeabi', 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86'
+        }
+    }
+    signingConfigs {
+        releaseConfig {
+            storeFile file("../DoctorTool.jks")
+            storePassword "yxj12345678"
+            keyAlias "yxj"
+            keyPassword "yxj12345678"
+        }
+    }
+
+    buildTypes {
+        // 对应 测试环境
+        debug {
+            minifyEnabled false
+            zipAlignEnabled false
+            shrinkResources false
+            buildConfigField "String", "VERSION_TYPE", "\"${ProjectBuildConfig.Version.TEST}\""
+            signingConfig signingConfigs.releaseConfig
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        //对应 预生产环境
+        beta {
+            minifyEnabled false
+            zipAlignEnabled false
+            shrinkResources false
+            buildConfigField "String", "VERSION_TYPE", "\"${ProjectBuildConfig.Version.BETA}\""
+            signingConfig signingConfigs.releaseConfig
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        //对应正式环境
+        release {
+            debuggable false
+            // 显示Log
+            minifyEnabled true
+            //zipAl优化
+            zipAlignEnabled true
+            shrinkResources true
+            buildConfigField "String", "VERSION_TYPE", "\"${ProjectBuildConfig.Version.RELEASE}\""
+            signingConfig signingConfigs.releaseConfig
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // 自定义打包apk的文件名
+    android.applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            if (outputFileName != null && outputFileName.endsWith('.apk')) {
+                outputFileName = "${ProjectBuildConfig.applicationId}" +
+                        "_${ProjectBuildConfig.versionCode}" +
+                        "(${ProjectBuildConfig.versionName})" +
+                        "_${variant.buildType.name}" +
+                        ".apk"
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+       implementation fileTree(dir: "libs", include: ["*.jar"])
+        implementation project(path: ':module_home')
+        implementation project(path: ':module_login')
+        implementation project(path: ':module_mine')
+
+    implementation DependencyConfig.JetPack.HiltCore
+
+    kapt DependencyConfig.GitHub.AutoServiceAnnotations
+    kapt DependencyConfig.JetPack.HiltApt
+    kapt DependencyConfig.JetPack.HiltAndroidx
+}

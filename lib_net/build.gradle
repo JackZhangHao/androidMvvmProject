@@ -1,0 +1,31 @@
+//****************************************
+//********* lib_net 的配置文件 **********
+//****************************************
+
+apply from: '../base_lib.gradle'
+
+import cn.org.yxj.tool.*
+
+android {
+
+    defaultConfig {
+
+    }
+
+    buildFeatures {
+        viewBinding = true
+    }
+
+    resourcePrefix "net_"
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+
+    api DependencyConfig.GitHub.OkHttp
+    api DependencyConfig.GitHub.OkHttpInterceptorLogging
+    api DependencyConfig.GitHub.Retrofit
+    api DependencyConfig.GitHub.RetrofitConverterGson
+
+
+}
